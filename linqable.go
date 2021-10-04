@@ -24,8 +24,23 @@ func Linqablize(t reflect.Type, packageName string) {
 				Block(jen.Id("res").Op("=").Id("append(res, i)"))).Line().Return(jen.Id("res"))))
 
 	// #endregion Where
-
+	jenFile.Line()
+	// #region Take
+	jenFile.Func().Call(jen.Id("si").Id(typeName)).Id("Take").Call(jen.Id("n int")).Id(typeName).
+		Block(jen.If(jen.Id("n < 0 || n > len(si)")).
+			Block(jen.Panic(jen.Id(`"Linq: Take() out of index"`))).Line().Id("res").Op(":=").Op("[]").Id(t.Name()).Op("{}").Line().For(jen.Id("i := 0; i < n; i++")).
+			Block(jen.Id("res = append(res, si[i])")).Line().Return(jen.Id("res")))
+	// #endregion Take
+	jenFile.Line()
+	// #region Skip
+	jenFile.Func().Call(jen.Id("si").Id(typeName)).Id("Skip").Call(jen.Id("n int")).Id(typeName).
+		Block(jen.If(jen.Id("n < 0 || n > len(si)")).
+			Block(jen.Panic(jen.Id(`"Linq: Skip() out of index"`))).Line().Return(jen.Id("si[n:]")))
+	// #endregion Skip
+	jenFile.Line()
+	// #region ToSlice
 	jenFile.Func().Call(jen.Id("si").Id(typeName)).Id("ToSlice").Call().Op("[]").Id(t.Name()).Block(jen.Return(jen.Id("si")))
+	// #endregion ToSlice
 
 	file, err := os.Create(fmt.Sprintf("linqable_%s.go", t.Name()))
 	if err != nil {
