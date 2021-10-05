@@ -15,6 +15,16 @@ func (si linqableInt) Contains(target int) bool {
 	return false
 }
 
+func (si linqableInt) Count(predicate func(int) bool) int {
+	var count int
+	for _, i := range si {
+		if predicate(i) {
+			count++
+		}
+	}
+	return count
+}
+
 func (si linqableInt) Any(predicate func(int) bool) bool {
 	for _, i := range si {
 		if predicate(i) {

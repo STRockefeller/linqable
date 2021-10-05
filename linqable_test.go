@@ -80,4 +80,8 @@ func TestSample(t *testing.T) {
 		actual := si.SkipLast(7).ToSlice()
 		assert.Equal(t, []int{0, 1, 2}, actual)
 	}
+	{ // case Count
+		actual := si.Count(func(i int) bool { return i%2 == 1 })
+		assert.Equal(t, 5, actual)
+	}
 }

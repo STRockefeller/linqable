@@ -70,6 +70,15 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	// #endregion Contains
 	jenFile.Line()
 
+	// #region Count
+	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("Count").Call(predicateCode).Id("int").
+		Block(jen.Id("var count int").Line().For(jen.Id("_").Op(",").Id("i").Op(":=").Id("range").Id("si").
+			Block(jen.If(jen.Id("predicate(i)")).
+				Block(jen.Id("count++"))).Line().Return(jen.Id("count"))))
+
+	// #endregion Count
+	jenFile.Line()
+
 	// #region Any
 	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("Any").Call(predicateCode).Id("bool").
 		Block(jen.For(jen.Id("_").Op(",").Id("i").Op(":=").Id("range").Id("si").
