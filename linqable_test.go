@@ -48,4 +48,28 @@ func TestSample(t *testing.T) {
 		actual := si.SkipWhile(func(i int) bool { return i < 8 }).ToSlice()
 		assert.Equal(t, []int{8, 9}, actual)
 	}
+	{ // case Contains
+		actual := si.Contains(3)
+		assert.Equal(t, true, actual)
+	}
+	{ // case Contains
+		actual := si.Contains(10)
+		assert.Equal(t, false, actual)
+	}
+	{ // case Any
+		actual := si.Any(func(i int) bool { return i > 10 })
+		assert.Equal(t, false, actual)
+	}
+	{ // case Any
+		actual := si.Any(func(i int) bool { return i < 2 })
+		assert.Equal(t, true, actual)
+	}
+	{ // case All
+		actual := si.All(func(i int) bool { return i < 3 })
+		assert.Equal(t, false, actual)
+	}
+	{ // case All
+		actual := si.All(func(i int) bool { return i >= 0 })
+		assert.Equal(t, true, actual)
+	}
 }

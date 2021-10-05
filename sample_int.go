@@ -6,6 +6,35 @@ func newLinqableInt(si []int) linqableInt {
 	return si
 }
 
+func (si linqableInt) Contains(target int) bool {
+	for _, i := range si {
+		if i == target {
+			return true
+		}
+	}
+	return false
+}
+
+func (si linqableInt) Any(predicate func(int) bool) bool {
+	for _, i := range si {
+		if predicate(i) {
+			return true
+		}
+	}
+	return false
+}
+
+func (si linqableInt) All(predicate func(int) bool) bool {
+	for _, i := range si {
+		if predicate(i) {
+			continue
+		} else {
+			return false
+		}
+	}
+	return true
+}
+
 func (si linqableInt) Where(predicate func(int) bool) linqableInt {
 	res := []int{}
 	for _, i := range si {

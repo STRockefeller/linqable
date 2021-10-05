@@ -12,15 +12,17 @@ import (
 //
 // Parameters
 //
-// t reflect.Type => the specified type
+// t reflect.Type               => the specified type
 //
-// packageName string => package name of the `.go` file
+// packageName string           => package name of the `.go` file
 //
-// opts => optional parameters
+// opts ...LinqablizeOptionFunc => optional parameters
 //
 // Optional Parameters
 //
 // IsImportedType() => output file will import the package of the specified type
+//
+// IsNumeric() => output type will contains the method Sum() Max() Min()
 func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc) {
 	var opt linqablizeOption
 	for _, optFunc := range opts {
@@ -57,6 +59,34 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 				Block(jen.Id("res").Op("=").Id("append(res, i)"))).Line().Return(jen.Id("res"))))
 
 	// #endregion Where
+	jenFile.Line()
+
+	// #region Contains
+	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("Contains").Call(jen.Id("target").Id(typeName)).Id("bool").
+		Block(jen.For(jen.Id("_").Op(",").Id("i").Op(":=").Id("range").Id("si").
+			Block(jen.If(jen.Id("i == target")).
+				Block(jen.Return(jen.Id("true")))).Line().Return(jen.Id("false"))))
+
+	// #endregion Contains
+	jenFile.Line()
+
+	// #region Any
+	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("Any").Call(predicateCode).Id("bool").
+		Block(jen.For(jen.Id("_").Op(",").Id("i").Op(":=").Id("range").Id("si").
+			Block(jen.If(jen.Id("predicate(i)")).
+				Block(jen.Return(jen.Id("true")))).Line().Return(jen.Id("false"))))
+
+	// #endregion Any
+	jenFile.Line()
+
+	// #region All
+	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("All").Call(predicateCode).Id("bool").
+		Block(jen.For(jen.Id("_").Op(",").Id("i").Op(":=").Id("range").Id("si").
+			Block(jen.If(jen.Id("predicate(i)")).
+				Block(jen.Continue()).Else().
+				Block(jen.Return(jen.Id("false")))).Line().Return(jen.Id("true"))))
+
+	// #endregion All
 	jenFile.Line()
 
 	// #region Take
@@ -96,7 +126,7 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("ToSlice").Call().Op("[]").Id(typeName).Block(jen.Return(jen.Id("si")))
 	// #endregion ToSlice
 
-	file, err := os.Create(fmt.Sprintf("linqable_%s.go", typeName))
+	file, err := os.Create(fmt.Sprintf("linqable_%s.go", t.Name()))
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -108,6 +138,7 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 type LinqablizeOptionFunc func(*linqablizeOption)
 type linqablizeOption struct {
 	isImportedType bool
+	isNumeric      bool
 }
 
 // IsImportedType : optional parameter for the Linqablize()
@@ -116,5 +147,14 @@ type linqablizeOption struct {
 func IsImportedType() LinqablizeOptionFunc {
 	return func(lo *linqablizeOption) {
 		lo.isImportedType = true
+	}
+}
+
+// IsNumeric : optional parameter for the Linqablize()
+//
+// output type will contains the method Sum() Max() Min()
+func IsNumeric() LinqablizeOptionFunc {
+	return func(lo *linqablizeOption) {
+		lo.isNumeric = true
 	}
 }

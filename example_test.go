@@ -16,5 +16,5 @@ func ExampleLinqablize_second() {
 	Linqablize(reflect.TypeOf(it), "main", IsImportedType())
 
 	// Output:
-	// new file linqable_string.go
+	// new file linqable_Method.go
 }
