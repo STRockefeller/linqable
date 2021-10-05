@@ -9,12 +9,18 @@ import (
 )
 
 // Linqablize : generate a new `.go` file with specified type
-//  Parameters
-//  - t reflect.Type => the specified type
-//  - packageName string => package name of the `.go` file
-//  - opts => optional parameters
+//
+// Parameters
+//
+// t reflect.Type => the specified type
+//
+// packageName string => package name of the `.go` file
+//
+// opts => optional parameters
+//
 // Optional Parameters
-//  - IsImportedType() => output file will import the package of the specified type
+//
+// IsImportedType() => output file will import the package of the specified type
 func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc) {
 	var opt linqablizeOption
 	for _, optFunc := range opts {
@@ -105,7 +111,8 @@ type linqablizeOption struct {
 }
 
 // IsImportedType : optional parameter for the Linqablize()
-//  output file will import the package of the specified type
+//
+// output file will import the package of the specified type
 func IsImportedType() LinqablizeOptionFunc {
 	return func(lo *linqablizeOption) {
 		lo.isImportedType = true
