@@ -1,12 +1,12 @@
 package linqable
 
-type LinqableInt []int
+type linqableInt []int
 
-func NewLinqableInt(si []int) LinqableInt {
+func newLinqableInt(si []int) linqableInt {
 	return si
 }
 
-func (si LinqableInt) Where(predicate func(int) bool) LinqableInt {
+func (si linqableInt) Where(predicate func(int) bool) linqableInt {
 	res := []int{}
 	for _, i := range si {
 		if predicate(i) {
@@ -16,7 +16,7 @@ func (si LinqableInt) Where(predicate func(int) bool) LinqableInt {
 	return res
 }
 
-func (si LinqableInt) Take(n int) LinqableInt {
+func (si linqableInt) Take(n int) linqableInt {
 	if n < 0 || n > len(si) {
 		panic("Linq: Take() out of index")
 	}
@@ -27,7 +27,7 @@ func (si LinqableInt) Take(n int) LinqableInt {
 	return res
 }
 
-func (si LinqableInt) TakeWhile(predicate func(int) bool) LinqableInt {
+func (si linqableInt) TakeWhile(predicate func(int) bool) linqableInt {
 	res := []int{}
 	for i := 0; i < len(si); i++ {
 		if predicate(si[i]) {
@@ -39,14 +39,14 @@ func (si LinqableInt) TakeWhile(predicate func(int) bool) LinqableInt {
 	return res
 }
 
-func (si LinqableInt) Skip(n int) LinqableInt {
+func (si linqableInt) Skip(n int) linqableInt {
 	if n < 0 || n > len(si) {
 		panic("Linq: Skip() out of index")
 	}
 	return si[n:]
 }
 
-func (si LinqableInt) SkipWhile(predicate func(int) bool) LinqableInt {
+func (si linqableInt) SkipWhile(predicate func(int) bool) linqableInt {
 	for i := 0; i < len(si); i++ {
 		if predicate(si[i]) {
 			continue
@@ -54,9 +54,9 @@ func (si LinqableInt) SkipWhile(predicate func(int) bool) LinqableInt {
 			return si[i:]
 		}
 	}
-	return LinqableInt{}
+	return linqableInt{}
 }
 
-func (si LinqableInt) ToSlice() []int {
+func (si linqableInt) ToSlice() []int {
 	return si
 }
