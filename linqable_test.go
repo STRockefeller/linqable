@@ -30,4 +30,12 @@ func TestSample(t *testing.T) {
 		actual := si.Skip(5).ToSlice()
 		assert.Equal(t, []int{5, 6, 7, 8, 9}, actual)
 	}
+	{ // case TakeWhile
+		actual := si.TakeWhile(func(i int) bool { return i < 5 }).ToSlice()
+		assert.Equal(t, []int{0, 1, 2, 3, 4}, actual)
+	}
+	{ // case SkipWhile
+		actual := si.SkipWhile(func(i int) bool { return i < 8 }).ToSlice()
+		assert.Equal(t, []int{8, 9}, actual)
+	}
 }
