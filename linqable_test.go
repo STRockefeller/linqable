@@ -13,6 +13,16 @@ func TestLinqablize(t *testing.T) {
 	Linqablize(ti, "linqable")
 }
 
+func TestStruct(t *testing.T) {
+	var ms MyStruct
+	Linqablize(reflect.TypeOf(ms), "linqable", IsImportedType())
+}
+
+type MyStruct struct {
+	a int
+	b string
+}
+
 func TestSample(t *testing.T) {
 	si := (linqableInt)([]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9})
 	{ // case ToSlice
