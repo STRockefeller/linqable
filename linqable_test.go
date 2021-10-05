@@ -72,4 +72,12 @@ func TestSample(t *testing.T) {
 		actual := si.All(func(i int) bool { return i >= 0 })
 		assert.Equal(t, true, actual)
 	}
+	{ // case TakeLast
+		actual := si.TakeLast(3).ToSlice()
+		assert.Equal(t, []int{7, 8, 9}, actual)
+	}
+	{ // case SkipLast
+		actual := si.SkipLast(7).ToSlice()
+		assert.Equal(t, []int{0, 1, 2}, actual)
+	}
 }

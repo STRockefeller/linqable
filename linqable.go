@@ -106,6 +106,13 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	// #endregion TakeWhile
 	jenFile.Line()
 
+	// #region TakeLast
+	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("TakeLast").Call(jen.Id("n int")).Id(linqableTypeName).
+		Block(jen.If(jen.Id("n < 0 || n > len(si)")).
+			Block(jen.Panic(jen.Id(`"Linq: TakeLast() out of index"`))).Line().Return(jen.Id("si.Skip(len(si) - n)")))
+	// #endregion TakeLast
+	jenFile.Line()
+
 	// #region Skip
 	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("Skip").Call(jen.Id("n int")).Id(linqableTypeName).
 		Block(jen.If(jen.Id("n < 0 || n > len(si)")).
@@ -120,6 +127,13 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 				Block(jen.Op("continue")).Else().
 				Block(jen.Return(jen.Id("si[i:]"))))).Line().Return(jen.Id(fmt.Sprintf("%s{}", linqableTypeName))))
 	// #endregion SkipWhile
+	jenFile.Line()
+
+	// #region SkipLast
+	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("SkipLast").Call(jen.Id("n int")).Id(linqableTypeName).
+		Block(jen.If(jen.Id("n < 0 || n > len(si)")).
+			Block(jen.Panic(jen.Id(`"Linq: SkipLast() out of index"`))).Line().Return(jen.Id("si.Take(len(si) - n)")))
+	// #endregion SkipLast
 	jenFile.Line()
 
 	// #region ToSlice

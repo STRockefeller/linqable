@@ -68,6 +68,13 @@ func (si linqableInt) TakeWhile(predicate func(int) bool) linqableInt {
 	return res
 }
 
+func (si linqableInt) TakeLast(n int) linqableInt {
+	if n < 0 || n > len(si) {
+		panic("Linq: TakeLast() out of index")
+	}
+	return si.Skip(len(si) - n)
+}
+
 func (si linqableInt) Skip(n int) linqableInt {
 	if n < 0 || n > len(si) {
 		panic("Linq: Skip() out of index")
@@ -84,6 +91,13 @@ func (si linqableInt) SkipWhile(predicate func(int) bool) linqableInt {
 		}
 	}
 	return linqableInt{}
+}
+
+func (si linqableInt) SkipLast(n int) linqableInt {
+	if n < 0 || n > len(si) {
+		panic("Linq: SkipLast() out of index")
+	}
+	return si.Take(len(si) - n)
 }
 
 func (si linqableInt) ToSlice() []int {

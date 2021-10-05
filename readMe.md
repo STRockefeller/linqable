@@ -12,7 +12,7 @@ linq realization in golang
 * There is no type judgment in the function. The execution speed is close to the for loop
 * strongly-typed: You will not see any  `interface{}` appears in the input or output of the methods. Method signatures of the delegate functions are all fixed.
 
-### Disadvantage
+### Notice
 
 * Only slices are currently supported.
 * This package will **not** contain all the methods of linq.
@@ -77,6 +77,11 @@ Supportable methods
 * Where
 * Take
 * TakeWhile
+* TakeLast
 * Skip
 * SkipWhile
+* SkipLast
+* Contains
+* Any
+* All
 * ToSlice
