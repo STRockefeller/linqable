@@ -74,10 +74,13 @@ linqable.Linqablize(reflect.TypeOf(myStruct),"main", linqable.IsImportedType())
 
 Supportable methods
 
-* Any
 * All
+* Any
+* Append
 * Contains
 * Count
+* ElementAt
+* ElementAtOrDefault
 * Skip
 * SkipLast
 * SkipWhile

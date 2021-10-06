@@ -84,4 +84,12 @@ func TestSample(t *testing.T) {
 		actual := si.Count(func(i int) bool { return i%2 == 1 })
 		assert.Equal(t, 5, actual)
 	}
+	{ // case Append
+		actual := si.Take(2).Append(3).ToSlice()
+		assert.Equal(t, []int{0, 1, 3}, actual)
+	}
+	{ // case ElementAt
+		actual := si.ElementAt(3)
+		assert.Equal(t, 3, actual)
+	}
 }

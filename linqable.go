@@ -57,7 +57,6 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 		Block(jen.Id("res").Op(":=").Op("[]").Id(typeName).Op("{}").Line().For(jen.Id("_").Op(",").Id("i").Op(":=").Id("range").Id("si").
 			Block(jen.If(jen.Id("predicate(i)")).
 				Block(jen.Id("res").Op("=").Id("append(res, i)"))).Line().Return(jen.Id("res"))))
-
 	// #endregion Where
 	jenFile.Line()
 
@@ -66,7 +65,6 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 		Block(jen.For(jen.Id("_").Op(",").Id("i").Op(":=").Id("range").Id("si").
 			Block(jen.If(jen.Id("i == target")).
 				Block(jen.Return(jen.Id("true")))).Line().Return(jen.Id("false"))))
-
 	// #endregion Contains
 	jenFile.Line()
 
@@ -75,7 +73,6 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 		Block(jen.Id("var count int").Line().For(jen.Id("_").Op(",").Id("i").Op(":=").Id("range").Id("si").
 			Block(jen.If(jen.Id("predicate(i)")).
 				Block(jen.Id("count++"))).Line().Return(jen.Id("count"))))
-
 	// #endregion Count
 	jenFile.Line()
 
@@ -84,7 +81,6 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 		Block(jen.For(jen.Id("_").Op(",").Id("i").Op(":=").Id("range").Id("si").
 			Block(jen.If(jen.Id("predicate(i)")).
 				Block(jen.Return(jen.Id("true")))).Line().Return(jen.Id("false"))))
-
 	// #endregion Any
 	jenFile.Line()
 
@@ -94,13 +90,32 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 			Block(jen.If(jen.Id("predicate(i)")).
 				Block(jen.Continue()).Else().
 				Block(jen.Return(jen.Id("false")))).Line().Return(jen.Id("true"))))
-
 	// #endregion All
+	jenFile.Line()
+
+	// #region Append
+	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("Append").Call(jen.Id("newItem").Id(typeName)).Id(linqableTypeName).
+		Block(jen.Return(jen.Id("append(si, newItem)")))
+	// #endregion Append
+	jenFile.Line()
+
+	// #region ElementAt
+	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("ElementAt").Call(jen.Id("index int")).Id(typeName).
+		Block(jen.If(jen.Id("index >= len(si)")).
+			Block(jen.Id(`panic("linq: ElementAt() out of index")`)).Line().Return(jen.Id("si[index]")))
+	// #endregion ElementAt
+	jenFile.Line()
+
+	// #region ElementAtOrDefault
+	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("ElementAtOrDefault").Call(jen.Id("index int")).Id(typeName).
+		Block(jen.Op("var").Id("defaultValue").Id(typeName).Line().If(jen.Id("index >= len(si)")).
+			Block(jen.Return(jen.Id("defaultValue"))).Line().Return(jen.Id("si[index]")))
+	// #endregion ElementAtOrDefault
 	jenFile.Line()
 
 	// #region Take
 	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("Take").Call(jen.Id("n int")).Id(linqableTypeName).
-		Block(jen.If(jen.Id("n < 0 || n > len(si)")).
+		Block(jen.If(jen.Id("n < 0 || n >= len(si)")).
 			Block(jen.Panic(jen.Id(`"Linq: Take() out of index"`))).Line().Id("res").Op(":=").Op("[]").Id(typeName).Op("{}").Line().For(jen.Id("i := 0; i < n; i++")).
 			Block(jen.Id("res = append(res, si[i])")).Line().Return(jen.Id("res")))
 	// #endregion Take
@@ -117,14 +132,14 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 
 	// #region TakeLast
 	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("TakeLast").Call(jen.Id("n int")).Id(linqableTypeName).
-		Block(jen.If(jen.Id("n < 0 || n > len(si)")).
+		Block(jen.If(jen.Id("n < 0 || n >= len(si)")).
 			Block(jen.Panic(jen.Id(`"Linq: TakeLast() out of index"`))).Line().Return(jen.Id("si.Skip(len(si) - n)")))
 	// #endregion TakeLast
 	jenFile.Line()
 
 	// #region Skip
 	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("Skip").Call(jen.Id("n int")).Id(linqableTypeName).
-		Block(jen.If(jen.Id("n < 0 || n > len(si)")).
+		Block(jen.If(jen.Id("n < 0 || n >= len(si)")).
 			Block(jen.Panic(jen.Id(`"Linq: Skip() out of index"`))).Line().Return(jen.Id("si[n:]")))
 	// #endregion Skip
 	jenFile.Line()

@@ -45,6 +45,25 @@ func (si linqableInt) All(predicate func(int) bool) bool {
 	return true
 }
 
+func (si linqableInt) Append(i int) linqableInt {
+	return append(si, i)
+}
+
+func (si linqableInt) ElementAt(index int) int {
+	if index >= len(si) {
+		panic("linq: ElementAt() out of index")
+	}
+	return si[index]
+}
+
+func (si linqableInt) ElementAtOrDefault(index int) int {
+	var defaultValue int
+	if index >= len(si) {
+		return defaultValue
+	}
+	return si[index]
+}
+
 func (si linqableInt) Where(predicate func(int) bool) linqableInt {
 	res := []int{}
 	for _, i := range si {
@@ -56,7 +75,7 @@ func (si linqableInt) Where(predicate func(int) bool) linqableInt {
 }
 
 func (si linqableInt) Take(n int) linqableInt {
-	if n < 0 || n > len(si) {
+	if n < 0 || n >= len(si) {
 		panic("Linq: Take() out of index")
 	}
 	res := []int{}
@@ -79,14 +98,14 @@ func (si linqableInt) TakeWhile(predicate func(int) bool) linqableInt {
 }
 
 func (si linqableInt) TakeLast(n int) linqableInt {
-	if n < 0 || n > len(si) {
+	if n < 0 || n >= len(si) {
 		panic("Linq: TakeLast() out of index")
 	}
 	return si.Skip(len(si) - n)
 }
 
 func (si linqableInt) Skip(n int) linqableInt {
-	if n < 0 || n > len(si) {
+	if n < 0 || n >= len(si) {
 		panic("Linq: Skip() out of index")
 	}
 	return si[n:]
