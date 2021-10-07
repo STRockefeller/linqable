@@ -70,6 +70,13 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	// #endregion Where
 	jenFile.Line()
 
+	// #region Reverse
+	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("Reverse").Call(predicateCode).Id(linqableTypeName).
+		Block(jen.For(jen.Id("i, j := 0, len(si)-1; i < j; i, j = i+1, j-1")).Block(jen.Id("si[i], si[j] = si[j], si[i]")).
+			Line().Return(jen.Id("si")))
+	// #endregion Reverse
+	jenFile.Line()
+
 	// #region Contains
 	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("Contains").Call(jen.Id("target").Id(typeName)).Id("bool").
 		Block(jen.For(jen.Id("_").Op(",").Id("elem").Op(":=").Id("range").Id("si").
@@ -112,6 +119,12 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("Append").Call(jen.Id("newItem").Id(typeName)).Id(linqableTypeName).
 		Block(jen.Return(jen.Id("append(si, newItem)")))
 	// #endregion Append
+	jenFile.Line()
+
+	// #region Prepend
+	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("Prepend").Call(jen.Id("newItem").Id(typeName)).Id(linqableTypeName).
+		Block(jen.Return(jen.Id("append").Call(jen.Op("[]").Id(typeName).Id("{newItem}").Id(", si.ToSlice()..."))))
+	// #endregion Prepend
 	jenFile.Line()
 
 	// #region ElementAt
@@ -181,6 +194,27 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 				Block(jen.Return(jen.Id("si[i]")))).
 			Line().Return(jen.Id("defaultValue")))
 	// #endregion LastOrDefault
+	jenFile.Line()
+
+	// #region Single
+	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("Single").Call(predicateCode).Id(typeName).
+		Block(jen.If(jen.Id("len(si) <= 0")).
+			Block(jen.Panic(jen.Id(`"linq: Single() empty set"`))).
+			Line().If(jen.Id("si.Count(predicate) == 1")).
+			Block(jen.Return(jen.Id("si.First(predicate)"))).
+			Line().Panic(jen.Id(`"linq: Single() eligible data count is not unique"`)))
+	// #endregion Single
+	jenFile.Line()
+
+	// #region SingleOrDefault
+	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("SingleOrDefault").Call(predicateCode).Id(typeName).
+		Block(jen.Id(defaultValueCode).
+			Line().If(jen.Id("len(si) <= 0")).
+			Block(jen.Return(jen.Id("defaultValue"))).
+			Line().If(jen.Id("si.Count(predicate) == 1")).
+			Block(jen.Return(jen.Id("si.First(predicate)"))).
+			Line().Return(jen.Id("defaultValue")))
+	// #endregion SingleOrDefault
 	jenFile.Line()
 
 	// #region Take

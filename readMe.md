@@ -86,6 +86,10 @@ Supportable methods
 * FirstOrDefault
 * Last
 * LastOrDefault
+* Prepend
+* Reverse
+* Single
+* SingleOrDefault
 * Skip
 * SkipLast
 * SkipWhile
@@ -121,4 +125,15 @@ if you want to count all elements in the slice, ~~you can use `len()`~~ you can 
 
 ```go
 intSlice.Count(func(i int)bool{return true})
+```
+
+### Default value
+
+You can set the default value of the type with the optional argument `HasDefaultValue(stringValue string)`
+
+For example
+
+```go
+ var l int64
+ Linqablize( reflect.TypeOf(l), "linqable", HasDefaultValue("int64(88888)"))
 ```

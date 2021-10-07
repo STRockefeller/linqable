@@ -49,6 +49,10 @@ func (si linqableInt) Append(i int) linqableInt {
 	return append(si, i)
 }
 
+func (si linqableInt) Preppend(i int) linqableInt {
+	return append([]int{i}, si.ToSlice()...)
+}
+
 func (si linqableInt) ElementAt(index int) int {
 	if index >= len(si) {
 		panic("linq: ElementAt() out of index")
@@ -118,6 +122,21 @@ func (si linqableInt) LastOrDefault(predicate func(int) bool) int {
 	return defaultValue
 }
 
+func (si linqableInt) Single(predicate func(int) bool) int {
+	if si.Count(predicate) == 1 {
+		return si.First(predicate)
+	}
+	panic("linq: Single() eligible data count is not unique")
+}
+
+func (si linqableInt) SingleOrDefault(predicate func(int) bool) int {
+	var defaultValue int
+	if si.Count(predicate) == 1 {
+		return si.First(predicate)
+	}
+	return defaultValue
+}
+
 func (si linqableInt) Where(predicate func(int) bool) linqableInt {
 	res := []int{}
 	for _, elem := range si {
@@ -126,6 +145,13 @@ func (si linqableInt) Where(predicate func(int) bool) linqableInt {
 		}
 	}
 	return res
+}
+
+func (si linqableInt) Reverse() linqableInt {
+	for i, j := 0, len(si)-1; i < j; i, j = i+1, j-1 {
+		si[i], si[j] = si[j], si[i]
+	}
+	return si
 }
 
 func (si linqableInt) Take(n int) linqableInt {

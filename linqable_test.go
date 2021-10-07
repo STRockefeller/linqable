@@ -113,4 +113,20 @@ func TestSample(t *testing.T) {
 		actual := si.LastOrDefault(func(i int) bool { return i < 8 })
 		assert.Equal(t, 7, actual)
 	}
+	{ // case Prepend
+		actual := si.Preppend(999).First(func(i int) bool { return true })
+		assert.Equal(t, 999, actual)
+	}
+	{ // case Reverse
+		actual := si.Reverse().ToSlice()
+		assert.Equal(t, []int{9, 8, 7, 6, 5, 4, 3, 2, 1, 0}, actual)
+	}
+	{ // case Single
+		actual := si.Single(func(i int) bool { return i < 1 })
+		assert.Equal(t, 0, actual)
+	}
+	{ // case SingleOeDefault
+		actual := si.SingleOrDefault(func(i int) bool { return i > 3 })
+		assert.Equal(t, 0, actual)
+	}
 }
