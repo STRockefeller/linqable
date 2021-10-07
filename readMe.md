@@ -93,6 +93,7 @@ Supportable methods
 * Skip
 * SkipLast
 * SkipWhile
+* Sum
 * Take
 * TakeLast
 * TakeWhile
@@ -136,4 +137,38 @@ For example
 ```go
  var l int64
  Linqablize( reflect.TypeOf(l), "linqable", HasDefaultValue("int64(88888)"))
+```
+
+### Method - Sum
+
+#### Case1
+
+C# - System.Linq
+
+```C#
+int sum = intList.Sum();
+```
+
+```C#
+int sum = intList.Sum(i=>i);
+```
+
+Go - this package
+
+```go
+sum := intSlice.SumInt(func(i int) int { return i })
+```
+
+#### Case2
+
+C# - System.Linq
+
+```C#
+double sum = intList.Sum(i => Convert.ToDouble(i));
+```
+
+Go - this package
+
+```go
+sum := intSlice.SumFloat64(func(i int) float64 { return float64(i) })
 ```

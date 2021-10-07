@@ -273,6 +273,46 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	// #endregion SkipLast
 	jenFile.Line()
 
+	// #region SumInt
+	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("SumInt").Call(jen.Id(fmt.Sprintf("selector func(%s) int", typeName))).Id("int").
+		Block(jen.Id("var sum int").
+			Line().For(jen.Id("_, elem := range si")).Block(jen.Id("sum += selector(elem)")).
+			Line().Return(jen.Id("sum")))
+	// #endregion SumInt
+	jenFile.Line()
+
+	// #region SumInt16
+	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("SumInt16").Call(jen.Id(fmt.Sprintf("selector func(%s) int16", typeName))).Id("int16").
+		Block(jen.Id("var sum int16").
+			Line().For(jen.Id("_, elem := range si")).Block(jen.Id("sum += selector(elem)")).
+			Line().Return(jen.Id("sum")))
+	// #endregion SumInt16
+	jenFile.Line()
+
+	// #region SumInt64
+	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("SumInt64").Call(jen.Id(fmt.Sprintf("selector func(%s) int64", typeName))).Id("int64").
+		Block(jen.Id("var sum int64").
+			Line().For(jen.Id("_, elem := range si")).Block(jen.Id("sum += selector(elem)")).
+			Line().Return(jen.Id("sum")))
+	// #endregion SumInt64
+	jenFile.Line()
+
+	// #region SumFloat32
+	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("SumFloat32").Call(jen.Id(fmt.Sprintf("selector func(%s) float32", typeName))).Id("float32").
+		Block(jen.Id("var sum float32").
+			Line().For(jen.Id("_, elem := range si")).Block(jen.Id("sum += selector(elem)")).
+			Line().Return(jen.Id("sum")))
+	// #endregion SumFloat32
+	jenFile.Line()
+
+	// #region SumFloat64
+	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("SumFloat64").Call(jen.Id(fmt.Sprintf("selector func(%s) float64", typeName))).Id("float64").
+		Block(jen.Id("var sum float64").
+			Line().For(jen.Id("_, elem := range si")).Block(jen.Id("sum += selector(elem)")).
+			Line().Return(jen.Id("sum")))
+	// #endregion SumFloat64
+	jenFile.Line()
+
 	// #region ToSlice
 	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("ToSlice").Call().Op("[]").Id(typeName).Block(jen.Return(jen.Id("si")))
 	// #endregion ToSlice

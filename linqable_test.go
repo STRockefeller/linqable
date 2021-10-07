@@ -129,4 +129,12 @@ func TestSample(t *testing.T) {
 		actual := si.SingleOrDefault(func(i int) bool { return i > 3 })
 		assert.Equal(t, 0, actual)
 	}
+	{ // case SumInt
+		actual := si.SumInt(func(i int) int { return i })
+		assert.Equal(t, 45, actual)
+	}
+	{ // case SumFloat
+		actual := si.SumFloat32(func(i int) float32 { return float32(i) })
+		assert.Equal(t, float32(45.0), actual)
+	}
 }

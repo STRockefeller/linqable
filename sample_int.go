@@ -209,6 +209,46 @@ func (si linqableInt) SkipLast(n int) linqableInt {
 	return si.Take(len(si) - n)
 }
 
+func (si linqableInt) SumInt(selector func(int) int) int {
+	var sum int
+	for _, elem := range si {
+		sum += selector(elem)
+	}
+	return sum
+}
+
+func (si linqableInt) SumInt16(selector func(int) int16) int16 {
+	var sum int16
+	for _, elem := range si {
+		sum += selector(elem)
+	}
+	return sum
+}
+
+func (si linqableInt) SumInt64(selector func(int) int64) int64 {
+	var sum int64
+	for _, elem := range si {
+		sum += selector(elem)
+	}
+	return sum
+}
+
+func (si linqableInt) SumFloat32(selector func(int) float32) float32 {
+	var sum float32
+	for _, elem := range si {
+		sum += selector(elem)
+	}
+	return sum
+}
+
+func (si linqableInt) SumFloat64(selector func(int) float64) float64 {
+	var sum float64
+	for _, elem := range si {
+		sum += selector(elem)
+	}
+	return sum
+}
+
 func (si linqableInt) ToSlice() []int {
 	return si
 }
