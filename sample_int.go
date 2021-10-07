@@ -7,8 +7,8 @@ func newLinqableInt(si []int) linqableInt {
 }
 
 func (si linqableInt) Contains(target int) bool {
-	for _, i := range si {
-		if i == target {
+	for _, elem := range si {
+		if elem == target {
 			return true
 		}
 	}
@@ -17,8 +17,8 @@ func (si linqableInt) Contains(target int) bool {
 
 func (si linqableInt) Count(predicate func(int) bool) int {
 	var count int
-	for _, i := range si {
-		if predicate(i) {
+	for _, elem := range si {
+		if predicate(elem) {
 			count++
 		}
 	}
@@ -26,8 +26,8 @@ func (si linqableInt) Count(predicate func(int) bool) int {
 }
 
 func (si linqableInt) Any(predicate func(int) bool) bool {
-	for _, i := range si {
-		if predicate(i) {
+	for _, elem := range si {
+		if predicate(elem) {
 			return true
 		}
 	}
@@ -35,8 +35,8 @@ func (si linqableInt) Any(predicate func(int) bool) bool {
 }
 
 func (si linqableInt) All(predicate func(int) bool) bool {
-	for _, i := range si {
-		if predicate(i) {
+	for _, elem := range si {
+		if predicate(elem) {
 			continue
 		} else {
 			return false
@@ -64,11 +64,65 @@ func (si linqableInt) ElementAtOrDefault(index int) int {
 	return si[index]
 }
 
+func (si linqableInt) Empty() linqableInt {
+	return newLinqableInt([]int{})
+}
+
+func (si linqableInt) First(predicate func(int) bool) int {
+	if len(si) <= 0 {
+		panic("linq: First() empty set")
+	}
+	for _, elem := range si {
+		if predicate(elem) {
+			return elem
+		}
+	}
+	panic("linq: First() no match element in the slice")
+}
+
+func (si linqableInt) FirstOrDefault(predicate func(int) bool) int {
+	var defaultValue int
+	if len(si) <= 0 {
+		return defaultValue
+	}
+	for _, elem := range si {
+		if predicate(elem) {
+			return elem
+		}
+	}
+	return defaultValue
+}
+
+func (si linqableInt) Last(predicate func(int) bool) int {
+	if len(si) <= 0 {
+		panic("linq: Last() empty set")
+	}
+	for i := len(si) - 1; i >= 0; i-- {
+		if predicate(si[i]) {
+			return si[i]
+		}
+	}
+	panic("linq: Last() no match element in the slice")
+}
+
+func (si linqableInt) LastOrDefault(predicate func(int) bool) int {
+	var defaultValue int
+	if len(si) <= 0 {
+		return defaultValue
+	}
+	for i := len(si) - 1; i >= 0; i-- {
+		if predicate(si[i]) {
+			return si[i]
+		}
+	}
+	return defaultValue
+}
+
 func (si linqableInt) Where(predicate func(int) bool) linqableInt {
 	res := []int{}
-	for _, i := range si {
-		if predicate(i) {
-			res = append(res, i)
+	for _, elem := range si {
+		if predicate(elem) {
+			res = append(res, elem)
 		}
 	}
 	return res

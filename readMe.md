@@ -81,6 +81,11 @@ Supportable methods
 * Count
 * ElementAt
 * ElementAtOrDefault
+* Empty
+* First
+* FirstOrDefault
+* Last
+* LastOrDefault
 * Skip
 * SkipLast
 * SkipWhile

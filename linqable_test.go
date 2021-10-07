@@ -7,12 +7,17 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestLinqablize(t *testing.T) {
+func TestLinqablize_string(t *testing.T) {
 	var i string
 	ti := reflect.TypeOf(i)
 	Linqablize(ti, "linqable")
 }
 
+func TestLinqablize_long_withDefault(t *testing.T) {
+	var i int64
+	ti := reflect.TypeOf(i)
+	Linqablize(ti, "linqable", HasDefaultValue("int64(88888)"))
+}
 func TestStruct(t *testing.T) {
 	var ms MyStruct
 	Linqablize(reflect.TypeOf(ms), "linqable", IsImportedType())
@@ -91,5 +96,21 @@ func TestSample(t *testing.T) {
 	{ // case ElementAt
 		actual := si.ElementAt(3)
 		assert.Equal(t, 3, actual)
+	}
+	{ // case First
+		actual := si.First(func(i int) bool { return i > 2 })
+		assert.Equal(t, 3, actual)
+	}
+	{ // case FirstOrDefault
+		actual := si.FirstOrDefault(func(i int) bool { return i > 100 })
+		assert.Equal(t, 0, actual)
+	}
+	{ // case Last
+		actual := si.Last(func(i int) bool { return i < 8 })
+		assert.Equal(t, 7, actual)
+	}
+	{ // case LastOrDefault
+		actual := si.LastOrDefault(func(i int) bool { return i < 8 })
+		assert.Equal(t, 7, actual)
 	}
 }
