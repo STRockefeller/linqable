@@ -289,7 +289,6 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 type LinqablizeOptionFunc func(*linqablizeOption)
 type linqablizeOption struct {
 	isImportedType  bool
-	isNumeric       bool
 	hasDefaultValue bool
 	defaultValue    string
 }
@@ -300,15 +299,6 @@ type linqablizeOption struct {
 func IsImportedType() LinqablizeOptionFunc {
 	return func(lo *linqablizeOption) {
 		lo.isImportedType = true
-	}
-}
-
-// IsNumeric : optional parameter for the Linqablize()
-//
-// output type will contains the method Sum() Max() Min()
-func IsNumeric() LinqablizeOptionFunc {
-	return func(lo *linqablizeOption) {
-		lo.isNumeric = true
 	}
 }
 
