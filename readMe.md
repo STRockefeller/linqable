@@ -86,6 +86,8 @@ Supportable methods
 * FirstOrDefault
 * Last
 * LastOrDefault
+* Max
+* Min
 * Prepend
 * Reverse
 * Single

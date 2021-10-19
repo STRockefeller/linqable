@@ -22,7 +22,7 @@ import (
 //
 // IsImportedType() => output file will import the package of the specified type
 //
-// IsNumeric() => output type will contains the method Sum() Max() Min()
+// IsNumberType() => output file will contain the methods such as Max(), Min() ...
 //
 // HasDefaultValue(stringValue string) => Set default value of your type, or using zero value as default.
 func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc) {
@@ -273,9 +273,9 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	// #endregion SkipLast
 	jenFile.Line()
 
-	// #region SumInt
-	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("SumInt").Call(jen.Id(fmt.Sprintf("selector func(%s) int", typeName))).Id("int").
-		Block(jen.Id("var sum int").
+	// #region SumInt32
+	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("SumInt32").Call(jen.Id(fmt.Sprintf("selector func(%s) int32", typeName))).Id("int32").
+		Block(jen.Id("var sum int32").
 			Line().For(jen.Id("_, elem := range si")).Block(jen.Id("sum += selector(elem)")).
 			Line().Return(jen.Id("sum")))
 	// #endregion SumInt
@@ -317,6 +317,28 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("ToSlice").Call().Op("[]").Id(typeName).Block(jen.Return(jen.Id("si")))
 	// #endregion ToSlice
 
+	if opt.isNumberType {
+		// #region Max
+		jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("Max").Call().Id(typeName).
+			Block(jen.Id("var max").Id(typeName).
+				Line().For(jen.Id("i, elem := range si")).
+				Block(jen.If(jen.Id("i == 0 || elem > max")).
+					Block(jen.Id("max = elem"))).
+				Line().Return(jen.Id("max")))
+		// #endregion Max
+		jenFile.Line()
+
+		// #region Min
+		jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("Min").Call().Id(typeName).
+			Block(jen.Id("var min").Id(typeName).
+				Line().For(jen.Id("i, elem := range si")).
+				Block(jen.If(jen.Id("i == 0 || elem < min")).
+					Block(jen.Id("min = elem"))).
+				Line().Return(jen.Id("min")))
+		// #endregion Min
+		jenFile.Line()
+	}
+
 	file, err := os.Create(fmt.Sprintf("linqable_%s.go", t.Name()))
 	if err != nil {
 		fmt.Println(err)
@@ -329,6 +351,7 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 type LinqablizeOptionFunc func(*linqablizeOption)
 type linqablizeOption struct {
 	isImportedType  bool
+	isNumberType    bool
 	hasDefaultValue bool
 	defaultValue    string
 }
@@ -339,6 +362,15 @@ type linqablizeOption struct {
 func IsImportedType() LinqablizeOptionFunc {
 	return func(lo *linqablizeOption) {
 		lo.isImportedType = true
+	}
+}
+
+// IsNumberType : optional parameter for the Linqablize()
+//
+// output file will contain the methods such as Max(), Min() ...
+func IsNumberType() LinqablizeOptionFunc {
+	return func(lo *linqablizeOption) {
+		lo.isNumberType = true
 	}
 }
 

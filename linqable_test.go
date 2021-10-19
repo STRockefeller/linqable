@@ -16,7 +16,7 @@ func TestLinqablize_string(t *testing.T) {
 func TestLinqablize_long_withDefault(t *testing.T) {
 	var i int64
 	ti := reflect.TypeOf(i)
-	Linqablize(ti, "linqable", HasDefaultValue("int64(88888)"))
+	Linqablize(ti, "linqable", HasDefaultValue("int64(88888)"), IsNumberType())
 }
 func TestStruct(t *testing.T) {
 	var ms MyStruct
@@ -130,11 +130,19 @@ func TestSample(t *testing.T) {
 		assert.Equal(t, 0, actual)
 	}
 	{ // case SumInt
-		actual := si.SumInt(func(i int) int { return i })
-		assert.Equal(t, 45, actual)
+		actual := si.SumInt32(func(i int) int32 { return int32(i) })
+		assert.Equal(t, int32(45), actual)
 	}
 	{ // case SumFloat
 		actual := si.SumFloat32(func(i int) float32 { return float32(i) })
 		assert.Equal(t, float32(45.0), actual)
+	}
+	{ // case Max
+		actual := si.Max()
+		assert.Equal(t, 9, actual)
+	}
+	{ // case Min
+		actual := si.Min()
+		assert.Equal(t, 0, actual)
 	}
 }
