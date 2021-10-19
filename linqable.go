@@ -22,7 +22,7 @@ import (
 //
 // IsImportedType() => output file will import the package of the specified type
 //
-// IsNumberType() => output file will contain the methods such as Max(), Min() ...
+// IsNumericType() => output file will contain the methods such as Max(), Min() ...
 //
 // HasDefaultValue(stringValue string) => Set default value of your type, or using zero value as default.
 func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc) {
@@ -317,7 +317,7 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("ToSlice").Call().Op("[]").Id(typeName).Block(jen.Return(jen.Id("si")))
 	// #endregion ToSlice
 
-	if opt.isNumberType {
+	if opt.isNumericType {
 		// #region Max
 		jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("Max").Call().Id(typeName).
 			Block(jen.Id("var max").Id(typeName).
@@ -351,7 +351,7 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 type LinqablizeOptionFunc func(*linqablizeOption)
 type linqablizeOption struct {
 	isImportedType  bool
-	isNumberType    bool
+	isNumericType   bool
 	hasDefaultValue bool
 	defaultValue    string
 }
@@ -365,12 +365,12 @@ func IsImportedType() LinqablizeOptionFunc {
 	}
 }
 
-// IsNumberType : optional parameter for the Linqablize()
+// IsNumericType : optional parameter for the Linqablize()
 //
 // output file will contain the methods such as Max(), Min() ...
-func IsNumberType() LinqablizeOptionFunc {
+func IsNumericType() LinqablizeOptionFunc {
 	return func(lo *linqablizeOption) {
-		lo.isNumberType = true
+		lo.isNumericType = true
 	}
 }
 

@@ -16,7 +16,7 @@ func TestLinqablize_string(t *testing.T) {
 func TestLinqablize_long_withDefault(t *testing.T) {
 	var i int64
 	ti := reflect.TypeOf(i)
-	Linqablize(ti, "linqable", HasDefaultValue("int64(88888)"), IsNumberType())
+	Linqablize(ti, "linqable", HasDefaultValue("int64(88888)"), IsNumericType())
 }
 func TestStruct(t *testing.T) {
 	var ms MyStruct
