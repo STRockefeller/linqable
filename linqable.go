@@ -61,6 +61,16 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	// #endregion constructor
 	jenFile.Line()
 
+	// #region Repeat
+	jenFile.Commentf("Repeat%s generates a sequence that contains one repeated value.", typeName)
+	jenFile.Func().Id(fmt.Sprintf("Repeat%s", typeName)).Call(jen.Id(fmt.Sprintf("element %s, count int", typeName))).Id(linqableTypeName).
+		Block(jen.Id(fmt.Sprintf("si := New%s([]%s{})", linqableTypeName, typeName)).
+			Line().For(jen.Id("i := 0; i < count; i++")).
+			Block(jen.Id("si = si.Append(element)")).
+			Line().Return(jen.Id("si")))
+	// #endregion Repeat
+	jenFile.Line()
+
 	// #region Where
 	jenFile.Comment("Where filters a sequence of values based on a predicate.")
 	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("Where").Call(predicateCode).Id(linqableTypeName).

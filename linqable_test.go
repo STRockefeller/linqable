@@ -145,4 +145,8 @@ func TestSample(t *testing.T) {
 		actual := si.Min()
 		assert.Equal(t, 0, actual)
 	}
+	{ // case Repeat
+		actual := RepeatInt(123, 3).ToSlice()
+		assert.Equal(t, []int{123, 123, 123}, actual)
+	}
 }

@@ -89,6 +89,7 @@ Supportable methods
 * Max
 * Min
 * Prepend
+* Repeat
 * Reverse
 * Single
 * SingleOrDefault
