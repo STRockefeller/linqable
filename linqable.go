@@ -223,7 +223,6 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	// #endregion Single
 	jenFile.Line()
 
-	// todo SingleOrDefault should return a panic while eligible data count is not unique
 	// #region SingleOrDefault
 	jenFile.Comment("SingleOrDefault returns the only element of a sequence, or a default value if the sequence is empty; this method returns a panic if there is more than one element in the sequence.")
 	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("SingleOrDefault").Call(predicateCode).Id(typeName).
@@ -232,7 +231,7 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 			Block(jen.Return(jen.Id("defaultValue"))).
 			Line().If(jen.Id("si.Count(predicate) == 1")).
 			Block(jen.Return(jen.Id("si.First(predicate)"))).
-			Line().Return(jen.Id("defaultValue")))
+			Line().Panic(jen.Id(`"linq: SingleOrDefault() eligible data count is not unique"`)))
 	// #endregion SingleOrDefault
 	jenFile.Line()
 
