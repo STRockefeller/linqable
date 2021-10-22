@@ -148,10 +148,11 @@ func (si linqableInt) Where(predicate func(int) bool) linqableInt {
 }
 
 func (si linqableInt) Reverse() linqableInt {
+	res := newLinqableInt(make([]int, len(si)))
 	for i, j := 0, len(si)-1; i < j; i, j = i+1, j-1 {
-		si[i], si[j] = si[j], si[i]
+		res[i], res[j] = si[j], si[i]
 	}
-	return si
+	return res
 }
 
 func (si linqableInt) Take(n int) linqableInt {
@@ -280,3 +281,25 @@ func RepeatInt(element int, count int) linqableInt {
 func (si linqableInt) ToSlice() []int {
 	return si
 }
+
+// #region not linq
+
+func (si linqableInt) ForEach(callBack func(int)) {
+	for _, elem := range si {
+		callBack(elem)
+	}
+}
+
+func (si linqableInt) ReplaceAll(oldValue, newValue int) linqableInt {
+	res := newLinqableInt([]int{})
+	for _, elem := range si {
+		if elem == oldValue {
+			res = res.Append(newValue)
+		} else {
+			res = res.Append(elem)
+		}
+	}
+	return res
+}
+
+// #endregion not linq

@@ -85,8 +85,9 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	// #region Reverse
 	jenFile.Comment("Reverse inverts the order of the elements in a sequence.")
 	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("Reverse").Call(predicateCode).Id(linqableTypeName).
-		Block(jen.For(jen.Id("i, j := 0, len(si)-1; i < j; i, j = i+1, j-1")).Block(jen.Id("si[i], si[j] = si[j], si[i]")).
-			Line().Return(jen.Id("si")))
+		Block(jen.Id(fmt.Sprintf("res := New%s(make([]%s, len(si)))", linqableTypeName, typeName)).
+			Line().For(jen.Id("i, j := 0, len(si)-1; i < j; i, j = i+1, j-1")).Block(jen.Id("res[i], res[j] = si[j], si[i]")).
+			Line().Return(jen.Id("res")))
 	// #endregion Reverse
 	jenFile.Line()
 
@@ -380,6 +381,33 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 		// #endregion Min
 		jenFile.Line()
 	}
+
+	jenFile.Comment("#region not linq")
+	jenFile.Line()
+
+	// #region ForEach
+	jenFile.Commentf("ForEach() executes the provided callback once for each element present in the %s in ascending order.", linqableTypeName)
+
+	jenFile.Func().Call(jen.Id(fmt.Sprint("si ", linqableTypeName))).Id("ForEach").Params(jen.Id("callBack").Func().Params(jen.Id(typeName))).
+		Block(jen.For(jen.Id("_, elem := range si")).
+			Block(jen.Id("callBack(elem)")))
+	// #endregion ForEach
+	jenFile.Line()
+
+	// #region ReplaceAll
+	jenFile.Commentf("ReplaceAll replaces all oldValues with newValues in the %s", linqableTypeName)
+
+	jenFile.Func().Call(jen.Id(fmt.Sprint("si ", linqableTypeName))).Id("ReplaceAll").Params(jen.Id(fmt.Sprint("oldValue, newValue ", typeName))).Id(linqableTypeName).
+		Block(jen.Id(fmt.Sprintf("res := New%s([]%s{})", linqableTypeName, typeName)).
+			Line().For(jen.Id("_, elem := range si")).
+			Block(jen.If(jen.Id("elem == oldValue")).
+				Block(jen.Id("res = res.Append(newValue)")).Else().
+				Block(jen.Id("res = res.Append(elem)"))).
+			Line().Return(jen.Id("res")))
+	// #endregion ReplaceAll
+	jenFile.Line()
+
+	jenFile.Comment("#endregion not linq")
 
 	file, err := os.Create(fmt.Sprintf("linqable_%s.go", t.Name()))
 	if err != nil {

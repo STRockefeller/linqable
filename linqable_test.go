@@ -1,6 +1,7 @@
 package linqable
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -148,5 +149,8 @@ func TestSample(t *testing.T) {
 	{ // case Repeat
 		actual := RepeatInt(123, 3).ToSlice()
 		assert.Equal(t, []int{123, 123, 123}, actual)
+	}
+	{ // case ForEach
+		si.ForEach(func(i int) { fmt.Println("Foreach test ", i) })
 	}
 }

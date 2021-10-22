@@ -74,6 +74,8 @@ linqable.Linqablize(reflect.TypeOf(myStruct),"main", linqable.IsImportedType())
 
 Supportable methods
 
+Linq-like
+
 * All
 * Any
 * Append
@@ -102,6 +104,11 @@ Supportable methods
 * TakeWhile
 * ToSlice
 * Where
+
+not linq
+
+* ForEach
+* ReplaceAll
 
 ## Differences from [System.Linq](https://docs.microsoft.com/en-us/dotnet/api/system.linq?view=net-5.0)
 
