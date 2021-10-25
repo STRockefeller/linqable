@@ -39,10 +39,10 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	// #region imported type
 	if opt.isImportedType {
 		typeName = t.String()
-		jenFile.Id("import").Id("\"" + t.PkgPath() + "\"").
-			Line()
+		jenFile.Id("import").Id("\"" + t.PkgPath() + "\"").Line()
 	}
 	// #endregion imported type
+	jenFile.Id(`import "fmt"`).Line()
 	var defaultValueCode string
 	if opt.hasDefaultValue {
 		defaultValueCode = "defaultValue := " + opt.defaultValue
@@ -405,6 +405,68 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 				Block(jen.Id("res = res.Append(elem)"))).
 			Line().Return(jen.Id("res")))
 	// #endregion ReplaceAll
+	jenFile.Line()
+
+	// #region Remove
+	jenFile.Commentf("Removes the first occurrence of a specific object from the %s.", linqableTypeName)
+
+	jenFile.Func().Call(jen.Id(fmt.Sprint("si *", linqableTypeName))).Id("Remove").Params(jen.Id(fmt.Sprint("item ", typeName))).Id("bool").
+		Block(jen.Id(fmt.Sprintf("res := New%s([]%s{})", linqableTypeName, typeName)).
+			Line().Id("var isRemoved bool").
+			Line().For(jen.Id("_, elem := range *si")).
+			Block(jen.If(jen.Id("elem == item && !isRemoved")).
+				Block(jen.Id("isRemoved = true").
+					Line().Op("continue")).
+				Line().Id("res = res.Append(elem)")).
+			Line().Id("*si = res").
+			Line().Return(jen.Id("isRemoved")))
+	// #endregion Remove
+	jenFile.Line()
+
+	// #region RemoveAll
+	jenFile.Comment("Removes all the elements that match the conditions defined by the specified predicate.")
+
+	jenFile.Func().Call(jen.Id(fmt.Sprint("si *", linqableTypeName))).Id("RemoveAll").Params(predicateCode).Id("int").
+		Block(jen.Id("var count int").
+			Line().Id(fmt.Sprintf("res := New%s([]%s{})", linqableTypeName, typeName)).
+			Line().For(jen.Id("_, elem := range *si")).
+			Block(jen.If(jen.Id("predicate(elem)")).
+				Block(jen.Id("count++").
+					Line().Op("continue")).
+				Line().Id("res = res.Append(elem)")).
+			Line().Id("*si = res").
+			Line().Return(jen.Id("count")))
+	// #endregion RemoveAll
+	jenFile.Line()
+
+	// #region RemoveAt
+	jenFile.Commentf("Removes the element at the specified index of the %s.", linqableTypeName)
+
+	jenFile.Func().Call(jen.Id(fmt.Sprint("si *", linqableTypeName))).Id("RemoveAt").Params(jen.Id("index int")).
+		Block(jen.Id(fmt.Sprintf("res := New%s([]%s{})", linqableTypeName, typeName)).
+			Line().For(jen.Id("i := 0; i < len(*si); i++")).
+			Block(jen.If(jen.Id("i == index")).
+				Block(jen.Op("continue")).
+				Line().Id("res = res.Append((*si)[i])")).
+			Line().Id("*si = res"))
+	// #endregion RemoveAt
+	jenFile.Line()
+
+	// #region RemoveRange
+	jenFile.Commentf("Removes a range of elements from the %s.", linqableTypeName)
+
+	jenFile.Func().Call(jen.Id(fmt.Sprint("si *", linqableTypeName))).Id("RemoveRange").Params(jen.Id("index, count int")).Id("error").
+		Block(jen.If(jen.Id("index < 0 || count < 0 || index+count > len(*si)")).
+			Block(jen.Return(jen.Id(`fmt.Errorf("argument out of range")`))).
+			Line().Id(fmt.Sprintf("res := New%s([]%s{})", linqableTypeName, typeName)).
+			Line().For(jen.Id("i := 0; i < len(*si); i++")).
+			Block(jen.If(jen.Id("i >= index && count != 0")).
+				Block(jen.Id("count--").
+					Line().Op("continue")).
+				Line().Id("res = res.Append((*si)[i])")).
+			Line().Id("*si = res").
+			Line().Return(jen.Id("nil")))
+	// #endregion RemoveRange
 	jenFile.Line()
 
 	jenFile.Comment("#endregion not linq")

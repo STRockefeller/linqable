@@ -108,6 +108,10 @@ Linq-like
 not linq
 
 * ForEach
+* Remove
+* RemoveAll
+* RemoveAt
+* RemoveRange
 * ReplaceAll
 
 ## Differences from [System.Linq](https://docs.microsoft.com/en-us/dotnet/api/system.linq?view=net-5.0)

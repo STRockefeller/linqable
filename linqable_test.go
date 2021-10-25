@@ -153,4 +153,37 @@ func TestSample(t *testing.T) {
 	{ // case ForEach
 		si.ForEach(func(i int) { fmt.Println("Foreach test ", i) })
 	}
+	{ // case Remove
+		actual := newLinqableInt([]int{1, 2, 3, 4})
+		actual2 := actual.Remove(3)
+		assert.True(t, actual2)
+		assert.Equal(t, newLinqableInt([]int{1, 2, 4}), actual)
+	}
+	{ // case RemoveAll
+		actual := newLinqableInt([]int{1, 2, 3, 4, 5, 6, 7})
+		actual2 := actual.RemoveAll(func(i int) bool { return i%2 == 1 })
+		assert.Equal(t, 4, actual2)
+		assert.Equal(t, newLinqableInt([]int{2, 4, 6}), actual)
+	}
+	{ // case RemoveAt
+		actual := newLinqableInt([]int{1, 2, 3, 4, 5})
+		actual.RemoveAt(3)
+		assert.Equal(t, newLinqableInt([]int{1, 2, 3, 5}), actual)
+	}
+	{ // case RemoveRange
+		actual := newLinqableInt([]int{1, 2, 3, 4, 5, 6, 7, 8, 9})
+		err := actual.RemoveRange(-1, 3)
+		assert.Equal(t, fmt.Errorf("argument out of range"), err)
+	}
+	{ // case RemoveRange
+		actual := newLinqableInt([]int{1, 2, 3, 4, 5, 6, 7, 8, 9})
+		err := actual.RemoveRange(1, 50)
+		assert.Equal(t, fmt.Errorf("argument out of range"), err)
+	}
+	{ // case RemoveRange
+		actual := newLinqableInt([]int{1, 2, 3, 4, 5, 6, 7, 8, 9})
+		err := actual.RemoveRange(2, 2)
+		assert.NoError(t, err)
+		assert.Equal(t, newLinqableInt([]int{1, 2, 5, 6, 7, 8, 9}), actual)
+	}
 }

@@ -1,5 +1,9 @@
 package linqable
 
+import (
+	"fmt"
+)
+
 type linqableInt []int
 
 func newLinqableInt(si []int) linqableInt {
@@ -300,6 +304,61 @@ func (si linqableInt) ReplaceAll(oldValue, newValue int) linqableInt {
 		}
 	}
 	return res
+}
+
+func (si *linqableInt) Remove(item int) bool {
+	res := newLinqableInt([]int{})
+	var isRemoved bool
+	for _, elem := range *si {
+		if elem == item && !isRemoved {
+			isRemoved = true
+			continue
+		}
+		res = res.Append(elem)
+	}
+	*si = res
+	return isRemoved
+}
+
+func (si *linqableInt) RemoveAll(predicate func(int) bool) int {
+	var count int
+	res := newLinqableInt([]int{})
+	for _, elem := range *si {
+		if predicate(elem) {
+			count++
+			continue
+		}
+		res = res.Append(elem)
+	}
+	*si = res
+	return count
+}
+
+func (si *linqableInt) RemoveAt(index int) {
+	res := newLinqableInt([]int{})
+	for i := 0; i < len(*si); i++ {
+		if i == index {
+			continue
+		}
+		res = res.Append((*si)[i])
+	}
+	*si = res
+}
+
+func (si *linqableInt) RemoveRange(index, count int) error {
+	if index < 0 || count < 0 || index+count > len(*si) {
+		return fmt.Errorf("argument out of range")
+	}
+	res := newLinqableInt([]int{})
+	for i := 0; i < len(*si); i++ {
+		if i >= index && count != 0 {
+			count--
+			continue
+		}
+		res = res.Append((*si)[i])
+	}
+	*si = res
+	return nil
 }
 
 // #endregion not linq
