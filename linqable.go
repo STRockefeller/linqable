@@ -43,6 +43,7 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	}
 	// #endregion imported type
 	jenFile.Id(`import "fmt"`).Line()
+	jenFile.Id(`import "reflect"`).Line()
 	var defaultValueCode string
 	if opt.hasDefaultValue {
 		defaultValueCode = "defaultValue := " + opt.defaultValue
@@ -62,8 +63,8 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	jenFile.Line()
 
 	// #region Repeat
-	jenFile.Commentf("Repeat%s generates a sequence that contains one repeated value.", typeName)
-	jenFile.Func().Id(fmt.Sprintf("Repeat%s", typeName)).Call(jen.Id(fmt.Sprintf("element %s, count int", typeName))).Id(linqableTypeName).
+	jenFile.Commentf("Repeat%s generates a sequence that contains one repeated value.", linqableTypeName)
+	jenFile.Func().Id(fmt.Sprintf("Repeat%s", linqableTypeName)).Call(jen.Id(fmt.Sprintf("element %s, count int", typeName))).Id(linqableTypeName).
 		Block(jen.Id(fmt.Sprintf("si := New%s([]%s{})", linqableTypeName, typeName)).
 			Line().For(jen.Id("i := 0; i < count; i++")).
 			Block(jen.Id("si = si.Append(element)")).
@@ -95,7 +96,7 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	jenFile.Comment("Contains determines whether a sequence contains a specified element.")
 	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("Contains").Call(jen.Id("target").Id(typeName)).Id("bool").
 		Block(jen.For(jen.Id("_").Op(",").Id("elem").Op(":=").Id("range").Id("si").
-			Block(jen.If(jen.Id("elem == target")).
+			Block(jen.If(jen.Id("reflect.DeepEqual(elem, target)")).
 				Block(jen.Return(jen.Id("true")))).
 			Line().Return(jen.Id("false"))))
 	// #endregion Contains
@@ -400,7 +401,7 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	jenFile.Func().Call(jen.Id(fmt.Sprint("si ", linqableTypeName))).Id("ReplaceAll").Params(jen.Id(fmt.Sprint("oldValue, newValue ", typeName))).Id(linqableTypeName).
 		Block(jen.Id(fmt.Sprintf("res := New%s([]%s{})", linqableTypeName, typeName)).
 			Line().For(jen.Id("_, elem := range si")).
-			Block(jen.If(jen.Id("elem == oldValue")).
+			Block(jen.If(jen.Id("reflect.DeepEqual(elem, oldValue)")).
 				Block(jen.Id("res = res.Append(newValue)")).Else().
 				Block(jen.Id("res = res.Append(elem)"))).
 			Line().Return(jen.Id("res")))
@@ -414,7 +415,7 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 		Block(jen.Id(fmt.Sprintf("res := New%s([]%s{})", linqableTypeName, typeName)).
 			Line().Id("var isRemoved bool").
 			Line().For(jen.Id("_, elem := range *si")).
-			Block(jen.If(jen.Id("elem == item && !isRemoved")).
+			Block(jen.If(jen.Id("reflect.DeepEqual(elem, item) && !isRemoved")).
 				Block(jen.Id("isRemoved = true").
 					Line().Op("continue")).
 				Line().Id("res = res.Append(elem)")).
