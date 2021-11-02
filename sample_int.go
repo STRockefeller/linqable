@@ -29,6 +29,16 @@ func (si linqableInt) Count(predicate func(int) bool) int {
 	return count
 }
 
+func (si linqableInt) Distinct() linqableInt {
+	res := si.Empty()
+	for _, elem := range si {
+		if !res.Contains(elem) {
+			res = res.Append(elem)
+		}
+	}
+	return res
+}
+
 func (si linqableInt) Any(predicate func(int) bool) bool {
 	for _, elem := range si {
 		if predicate(elem) {

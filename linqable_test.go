@@ -186,4 +186,8 @@ func TestSample(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, newLinqableInt([]int{1, 2, 5, 6, 7, 8, 9}), actual)
 	}
+	{ // case Distinct
+		actual := newLinqableInt([]int{1, 2, 3, 1, 5, 5, 2, 3, 8}).Distinct().ToSlice()
+		assert.Equal(t, []int{1, 2, 3, 5, 8}, actual)
+	}
 }

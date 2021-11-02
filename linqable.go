@@ -148,6 +148,17 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	// #endregion Prepend
 	jenFile.Line()
 
+	// #region Distinct
+	jenFile.Comment("Distinct returns distinct elements from a sequence by using the default equality comparer to compare values.")
+	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("Distinct").Call().Id(linqableTypeName).
+		Block(jen.Id("res := si.Empty()").
+			Line().For(jen.Id("_, elem := range si")).
+			Block(jen.If(jen.Id("!res.Contains(elem)")).
+				Block(jen.Id("res = res.Append(elem)"))).
+			Line().Return(jen.Id("res")))
+	// #endregion Distinct
+	jenFile.Line()
+
 	// #region ElementAt
 	jenFile.Comment("ElementAt returns the element at a specified index in a sequence.")
 	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("ElementAt").Call(jen.Id("index int")).Id(typeName).

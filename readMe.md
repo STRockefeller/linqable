@@ -81,6 +81,7 @@ Linq-like
 * Append
 * Contains
 * Count
+* Distinct
 * ElementAt
 * ElementAtOrDefault
 * Empty
