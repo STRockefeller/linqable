@@ -284,7 +284,7 @@ func (si linqableInt) Min() int {
 	return min
 }
 
-func RepeatInt(element int, count int) linqableInt {
+func repeatInt(element int, count int) linqableInt {
 	si := newLinqableInt([]int{})
 	for i := 0; i < count; i++ {
 		si = si.Append(element)
