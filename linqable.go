@@ -53,6 +53,7 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	predicateCode := jen.Id("predicate").Func().Call(jen.Id(typeName)).Id("bool")
 
 	jenFile.Line()
+	jenFile.Commentf("%s definition", linqableTypeName)
 	jenFile.Id("type").Id(linqableTypeName).Op("[]").Id(typeName)
 	jenFile.Line()
 
@@ -160,7 +161,8 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	jenFile.Line()
 
 	// #region ElementAt
-	jenFile.Comment("ElementAt returns the element at a specified index in a sequence.")
+	jenFile.Comment("ElementAt returns the element at a specified index in a sequence." +
+		"\r\n\r\n panic:" + "\r\n  - linq: ElementAt() out of index")
 	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("ElementAt").Call(jen.Id("index int")).Id(typeName).
 		Block(jen.If(jen.Id("index >= len(si)")).
 			Block(jen.Id(`panic("linq: ElementAt() out of index")`)).
@@ -186,7 +188,8 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	jenFile.Line()
 
 	// #region First
-	jenFile.Comment("First returns the first element in a sequence that satisfies a specified condition.")
+	jenFile.Comment("First returns the first element in a sequence that satisfies a specified condition." +
+		"\r\n\r\n panic:" + "\r\n  - linq: First() empty set" + "\r\n  - linq: First() no match element in the slice")
 	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("First").Call(predicateCode).Id(typeName).
 		Block(jen.If(jen.Id("len(si) <= 0")).
 			Block(jen.Panic(jen.Id(`"linq: First() empty set"`))).
@@ -211,7 +214,8 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	jenFile.Line()
 
 	// #region Last
-	jenFile.Comment("Last returns the last element in a sequence that satisfies a specified condition.")
+	jenFile.Comment("Last returns the last element in a sequence that satisfies a specified condition." +
+		"\r\n\r\n panic:" + "\r\n  - linq: Last() empty set" + "\r\n  - linq: Last() no match element in the slice")
 	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("Last").Call(predicateCode).Id(typeName).
 		Block(jen.If(jen.Id("len(si) <= 0")).
 			Block(jen.Panic(jen.Id(`"linq: Last() empty set"`))).
@@ -259,7 +263,8 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	jenFile.Line()
 
 	// #region Take
-	jenFile.Comment("Take returns a specified number of contiguous elements from the start of a sequence.")
+	jenFile.Comment("Take returns a specified number of contiguous elements from the start of a sequence." +
+		"\r\n\r\n panic:" + "\r\n  - Linq: Take() out of index")
 	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("Take").Call(jen.Id("n int")).Id(linqableTypeName).
 		Block(jen.If(jen.Id("n < 0 || n >= len(si)")).
 			Block(jen.Panic(jen.Id(`"Linq: Take() out of index"`))).
@@ -283,7 +288,8 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	jenFile.Line()
 
 	// #region TakeLast
-	jenFile.Commentf("TakeLast returns a new %s that contains the last count elements from source.", linqableTypeName)
+	jenFile.Commentf("TakeLast returns a new %s that contains the last count elements from source."+
+		"\r\n\r\n panic:"+"\r\n  - Linq: TakeLast() out of index", linqableTypeName)
 	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("TakeLast").Call(jen.Id("n int")).Id(linqableTypeName).
 		Block(jen.If(jen.Id("n < 0 || n >= len(si)")).
 			Block(jen.Panic(jen.Id(`"Linq: TakeLast() out of index"`))).
@@ -292,7 +298,8 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	jenFile.Line()
 
 	// #region Skip
-	jenFile.Comment("Skip bypasses a specified number of elements in a sequence and then returns the remaining elements.")
+	jenFile.Comment("Skip bypasses a specified number of elements in a sequence and then returns the remaining elements." +
+		"\r\n\r\n panic:" + "\r\n  - Linq: Skip() out of index")
 	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("Skip").Call(jen.Id("n int")).Id(linqableTypeName).
 		Block(jen.If(jen.Id("n < 0 || n >= len(si)")).
 			Block(jen.Panic(jen.Id(`"Linq: Skip() out of index"`))).
@@ -312,7 +319,8 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	jenFile.Line()
 
 	// #region SkipLast
-	jenFile.Comment("SkipLast returns a new enumerable collection that contains the elements from source with the last count elements of the source collection omitted.")
+	jenFile.Comment("SkipLast returns a new enumerable collection that contains the elements from source with the last count elements of the source collection omitted." +
+		"\r\n\r\n panic:" + "\r\n  - Linq: SkipLast() out of index")
 	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("SkipLast").Call(jen.Id("n int")).Id(linqableTypeName).
 		Block(jen.If(jen.Id("n < 0 || n > len(si)")).
 			Block(jen.Panic(jen.Id(`"Linq: SkipLast() out of index"`))).
