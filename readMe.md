@@ -1,6 +1,6 @@
 # Linqable
 
-![license](https://img.shields.io/github/license/STRockefeller/linqable?style=plastic)![code size](https://img.shields.io/github/languages/code-size/STRockefeller/linqable?style=plastic)![open issues](https://img.shields.io/github/issues/STRockefeller/linqable)![closed issues](https://img.shields.io/github/issues-closed/STRockefeller/linqable)![go version](https://img.shields.io/github/go-mod/go-version/STRockefeller/linqable)![latest version](https://img.shields.io/github/v/tag/STRockefeller/linqable)
+![license](https://img.shields.io/github/license/STRockefeller/linqable?style=plastic)![code size](https://img.shields.io/github/languages/code-size/STRockefeller/linqable?style=plastic)![open issues](https://img.shields.io/github/issues/STRockefeller/linqable?style=plastic)![closed issues](https://img.shields.io/github/issues-closed/STRockefeller/linqable?style=plastic)![go version](https://img.shields.io/github/go-mod/go-version/STRockefeller/linqable?style=plastic)![latest version](https://img.shields.io/github/v/tag/STRockefeller/linqable?style=plastic)
 
 ## Abstract
 
