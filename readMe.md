@@ -93,6 +93,8 @@ Linq-like
 * LastOrDefault
 * Max
 * Min
+* OrderBy
+* OrderByDescending
 * Prepend
 * Repeat
 * Reverse

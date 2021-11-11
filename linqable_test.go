@@ -190,4 +190,14 @@ func TestSample(t *testing.T) {
 		actual := newLinqableInt([]int{1, 2, 3, 1, 5, 5, 2, 3, 8}).Distinct().ToSlice()
 		assert.Equal(t, []int{1, 2, 3, 5, 8}, actual)
 	}
+	{ // OrderBy
+		si := newLinqableInt([]int{5, 8, 2, 3, 6, 9, 4, 1, 7, 0})
+		orderedSi := si.OrderBy(func(i int) int { return i })
+		assert.Equal(t, newLinqableInt([]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}), orderedSi)
+	}
+	{ // OrderByDescending
+		si := newLinqableInt([]int{5, 8, 2, 3, 6, 9, 4, 1, 7, 0})
+		orderedSi := si.OrderByDescending(func(i int) int { return i })
+		assert.Equal(t, newLinqableInt([]int{9, 8, 7, 6, 5, 4, 3, 2, 1, 0}), orderedSi)
+	}
 }

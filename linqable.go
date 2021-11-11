@@ -44,6 +44,7 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	// #endregion imported type
 	jenFile.Id(`import "fmt"`).Line()
 	jenFile.Id(`import "reflect"`).Line()
+	jenFile.Id(`import "sort"`).Line()
 	var defaultValueCode string
 	if opt.hasDefaultValue {
 		defaultValueCode = "defaultValue := " + opt.defaultValue
@@ -326,6 +327,24 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 			Block(jen.Panic(jen.Id(`"Linq: SkipLast() out of index"`))).
 			Line().Return(jen.Id("si.Take(len(si) - n)")))
 	// #endregion SkipLast
+	jenFile.Line()
+
+	// #region OrderBy
+	jenFile.Comment("OrderBy sorts the elements of a sequence in ascending order according to a key.")
+	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("OrderBy").Call(jen.Id(fmt.Sprintf("comparer func(%s) int", typeName))).Id(linqableTypeName).
+		Block(jen.Id("sort.SliceStable").Call(jen.Id("si, func(i, j int) bool").
+			Block(jen.Return(jen.Id("comparer(si[i]) > comparer(si[j])")))).
+			Line().Return(jen.Id("si")))
+	// #endregion OrderBy
+	jenFile.Line()
+
+	// #region OrderByDescending
+	jenFile.Comment("OrderByDescending sorts the elements of a sequence in descending order according to a key.")
+	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("OrderByDescending").Call(jen.Id(fmt.Sprintf("comparer func(%s) int", typeName))).Id(linqableTypeName).
+		Block(jen.Id("sort.SliceStable").Call(jen.Id("si, func(i, j int) bool").
+			Block(jen.Return(jen.Id("comparer(si[i]) < comparer(si[j])")))).
+			Line().Return(jen.Id("si")))
+	// #endregion OrderByDescending
 	jenFile.Line()
 
 	// #region SumInt32

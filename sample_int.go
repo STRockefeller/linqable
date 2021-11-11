@@ -2,6 +2,7 @@ package linqable
 
 import (
 	"fmt"
+	"sort"
 )
 
 type linqableInt []int
@@ -282,6 +283,20 @@ func (si linqableInt) Min() int {
 		}
 	}
 	return min
+}
+
+func (si linqableInt) OrderBy(comparer func(int) int) linqableInt {
+	sort.SliceStable(si, func(i, j int) bool {
+		return comparer(si[i]) < comparer(si[j])
+	})
+	return si
+}
+
+func (si linqableInt) OrderByDescending(comparer func(int) int) linqableInt {
+	sort.SliceStable(si, func(i, j int) bool {
+		return comparer(si[i]) > comparer(si[j])
+	})
+	return si
 }
 
 func repeatInt(element int, count int) linqableInt {
