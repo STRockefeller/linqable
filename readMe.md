@@ -112,6 +112,8 @@ Linq-like
 
 not linq
 
+* Add
+* AddRange
 * ForEach
 * Remove
 * RemoveAll

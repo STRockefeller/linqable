@@ -424,6 +424,22 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	jenFile.Comment("#region not linq")
 	jenFile.Line()
 
+	// #region Add
+	jenFile.Commentf("Add adds an object to the end of the %s.", linqableTypeName)
+
+	jenFile.Func().Call(jen.Id(fmt.Sprint("si *", linqableTypeName))).Id("Add").Params(jen.Id("element").Id(typeName)).
+		Block(jen.Id("*si = append(*si, element)"))
+	// #endregion Add
+	jenFile.Line()
+
+	// #region AddRange
+	jenFile.Commentf("AddRange adds the elements of the specified collection to the end of the %s.", linqableTypeName)
+
+	jenFile.Func().Call(jen.Id(fmt.Sprint("si *", linqableTypeName))).Id("AddRange").Params(jen.Id("collection").Id(linqableTypeName)).
+		Block(jen.Id("*si = append(*si, collection...)"))
+	// #endregion AddRange
+	jenFile.Line()
+
 	// #region ForEach
 	jenFile.Commentf("ForEach executes the provided callback once for each element present in the %s in ascending order.", linqableTypeName)
 

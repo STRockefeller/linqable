@@ -312,6 +312,13 @@ func (si linqableInt) ToSlice() []int {
 }
 
 // #region not linq
+func (si *linqableInt) Add(element int) {
+	*si = append(*si, element)
+}
+
+func (si *linqableInt) AddRange(collection linqableInt) {
+	*si = append(*si, collection...)
+}
 
 func (si linqableInt) ForEach(callBack func(int)) {
 	for _, elem := range si {
