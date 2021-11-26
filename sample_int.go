@@ -320,6 +320,45 @@ func (si *linqableInt) AddRange(collection linqableInt) {
 	*si = append(*si, collection...)
 }
 
+func (si *linqableInt) Clear() {
+	*si = newLinqableInt(make([]int, cap(si.ToSlice())))
+}
+
+func (si linqableInt) Exists(predicate func(int) bool) bool {
+	return si.Any(predicate)
+}
+
+func (si linqableInt) Find(predicate func(int) bool) int {
+	return si.FirstOrDefault(predicate)
+}
+
+func (si linqableInt) FindAll(predicate func(int) bool) linqableInt {
+	return si.Where(predicate)
+}
+
+func (si linqableInt) FindIndex(predicate func(int) bool) int {
+	for i, elem := range si {
+		if predicate(elem) {
+			return i
+		}
+	}
+	return -1
+}
+
+func (si linqableInt) FindLast(predicate func(int) bool) int {
+	return si.LastOrDefault(predicate)
+}
+
+func (si linqableInt) FindLastIndex(predicate func(int) bool) int {
+	res := -1
+	for i, elem := range si {
+		if predicate(elem) {
+			res = i
+		}
+	}
+	return res
+}
+
 func (si linqableInt) ForEach(callBack func(int)) {
 	for _, elem := range si {
 		callBack(elem)

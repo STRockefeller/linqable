@@ -114,6 +114,13 @@ not linq
 
 * Add
 * AddRange
+* Clear
+* Exists
+* Find
+* FindAll
+* FindIndex
+* FindLast
+* FindLastIndex
 * ForEach
 * Remove
 * RemoveAll

@@ -440,6 +440,69 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	// #endregion AddRange
 	jenFile.Line()
 
+	// #region Clear
+	jenFile.Commentf("Clear removes all elements from the %s.", linqableTypeName)
+
+	jenFile.Func().Call(jen.Id(fmt.Sprint("si *", linqableTypeName))).Id("Clear").Params().
+		Block(jen.Id(fmt.Sprintf("*si = New%s(make([]%s, cap(si.ToSlice())))", linqableTypeName, typeName)))
+	// #endregion Clear
+	jenFile.Line()
+
+	// #region Exists
+	jenFile.Commentf("Exists determines whether the %s contains elements that match the conditions defined by the specified predicate.", linqableTypeName)
+
+	jenFile.Func().Call(jen.Id(fmt.Sprint("si ", linqableTypeName))).Id("Exists").Params(predicateCode).Id("bool").
+		Block(jen.Id("return si.Any(predicate)"))
+	// #endregion Exists
+	jenFile.Line()
+
+	// #region Find
+	jenFile.Commentf("Find searches for an element that matches the conditions defined by the specified predicate, and returns the first occurrence within the entire %s.", linqableTypeName)
+
+	jenFile.Func().Call(jen.Id(fmt.Sprint("si ", linqableTypeName))).Id("Find").Params(predicateCode).Id(typeName).
+		Block(jen.Id("return si.FirstOrDefault(predicate)"))
+	// #endregion Find
+	jenFile.Line()
+
+	// #region FindAll
+	jenFile.Comment("FindAll retrieves all the elements that match the conditions defined by the specified predicate")
+
+	jenFile.Func().Call(jen.Id(fmt.Sprint("si ", linqableTypeName))).Id("FindAll").Params(predicateCode).Id(linqableTypeName).
+		Block(jen.Id("return si.Where(predicate)"))
+	// #endregion FindAll
+	jenFile.Line()
+
+	// #region FindIndex
+	jenFile.Commentf("FindIndex searches for an element that matches the conditions defined by the specified predicate, and returns the zero-based index of the first occurrence within the entire %s.", linqableTypeName)
+
+	jenFile.Func().Call(jen.Id(fmt.Sprint("si ", linqableTypeName))).Id("FindIndex").Params(predicateCode).Id("int").
+		Block(jen.For(jen.Id("i, elem := range si")).
+			Block(jen.If(jen.Id("predicate(elem)")).
+				Block(jen.Return(jen.Id("i")))).
+			Line().Return(jen.Id("-1")))
+	// #endregion FindIndex
+	jenFile.Line()
+
+	// #region FindLast
+	jenFile.Commentf("FindLast searches for an element that matches the conditions defined by the specified predicate, and returns the last occurrence within the entire %s.", linqableTypeName)
+
+	jenFile.Func().Call(jen.Id(fmt.Sprint("si ", linqableTypeName))).Id("FindLast").Params(predicateCode).Id(typeName).
+		Block(jen.Id("return si.LastOrDefault(predicate)"))
+	// #endregion FindLast
+	jenFile.Line()
+
+	// #region FindLastIndex
+	jenFile.Commentf("FindLastIndex searches for an element that matches the conditions defined by the specified predicate, and returns the zero-based index of the last occurrence within the entire %s.", linqableTypeName)
+
+	jenFile.Func().Call(jen.Id(fmt.Sprint("si ", linqableTypeName))).Id("FindLastIndex").Params(predicateCode).Id("int").
+		Block(jen.Id("res := -1").
+			Line().For(jen.Id("i, elem := range si")).
+			Block(jen.If(jen.Id("predicate(elem)")).
+				Block(jen.Id("res = i"))).
+			Line().Return(jen.Id("res")))
+	// #endregion FindLastIndex
+	jenFile.Line()
+
 	// #region ForEach
 	jenFile.Commentf("ForEach executes the provided callback once for each element present in the %s in ascending order.", linqableTypeName)
 

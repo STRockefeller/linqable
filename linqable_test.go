@@ -211,4 +211,35 @@ func TestSample(t *testing.T) {
 		si.AddRange([]int{4, 5, 6})
 		assert.Equal(si, newLinqableInt([]int{1, 2, 3, 4, 5, 6}))
 	}
+	{ // Clear
+		si := newLinqableInt([]int{1, 2, 3})
+		capacity := cap(si.ToSlice())
+		si.Clear()
+		assert.Equal(si, newLinqableInt(make([]int, capacity)))
+	}
+	{ // Exists
+		si := newLinqableInt([]int{1, 2, 3})
+		assert.True(si.Exists(func(i int) bool { return i == 2 }))
+		assert.False(si.Exists(func(i int) bool { return i-10 > 0 }))
+	}
+	{ // Find
+		si := newLinqableInt([]int{1, 3, 5, 6, 7, 8, 9})
+		assert.Equal(6, si.Find(func(i int) bool { return i%2 == 0 }))
+	}
+	{ // FindAll
+		si := newLinqableInt([]int{1, 3, 5, 6, 7, 8, 9})
+		assert.Equal(newLinqableInt([]int{6, 8}), si.FindAll(func(i int) bool { return i%2 == 0 }))
+	}
+	{ // FindIndex
+		si := newLinqableInt([]int{1, 3, 5, 6, 7, 8, 9})
+		assert.Equal(3, si.FindIndex(func(i int) bool { return i%2 == 0 }))
+	}
+	{ // FindLast
+		si := newLinqableInt([]int{1, 3, 5, 6, 7, 8, 9})
+		assert.Equal(8, si.FindLast(func(i int) bool { return i%2 == 0 }))
+	}
+	{ // FindLastIndex
+		si := newLinqableInt([]int{1, 3, 5, 6, 7, 8, 9})
+		assert.Equal(5, si.FindLastIndex(func(i int) bool { return i%2 == 0 }))
+	}
 }
