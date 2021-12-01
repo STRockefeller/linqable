@@ -115,6 +115,7 @@ not linq
 * Add
 * AddRange
 * Clear
+* Clone
 * Exists
 * Find
 * FindAll

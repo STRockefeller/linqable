@@ -393,8 +393,12 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	jenFile.Line()
 
 	// #region ToSlice
-	jenFile.Commentf("ToSlice create a/an %s from a/an %s", linqableTypeName, typeName)
-	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("ToSlice").Call().Op("[]").Id(typeName).Block(jen.Return(jen.Id("si")))
+	jenFile.Commentf("ToSlice create a/an %s slice from a/an %s", typeName, typeName)
+	jenFile.Func().Call(jen.Id("si").Id(linqableTypeName)).Id("ToSlice").Call().Op("[]").Id(typeName).
+		Block(jen.Id(fmt.Sprintf("res := make([]%s, len(si))", typeName)).
+			Line().For(jen.Id("i, elem := range si")).
+			Block(jen.Id("res[i] = elem")).
+			Line().Return(jen.Id("res")))
 	// #endregion ToSlice
 
 	if opt.isNumericType {
@@ -446,6 +450,14 @@ func Linqablize(t reflect.Type, packageName string, opts ...LinqablizeOptionFunc
 	jenFile.Func().Call(jen.Id(fmt.Sprint("si *", linqableTypeName))).Id("Clear").Params().
 		Block(jen.Id(fmt.Sprintf("*si = New%s(make([]%s, cap(si.ToSlice())))", linqableTypeName, typeName)))
 	// #endregion Clear
+	jenFile.Line()
+
+	// #region Clone
+	jenFile.Commentf("Clone copies the %s to a new %s", linqableTypeName, linqableTypeName)
+
+	jenFile.Func().Call(jen.Id(fmt.Sprint("si ", linqableTypeName))).Id("Clone").Params().Id(linqableTypeName).
+		Block(jen.Return(jen.Id("si.ToSlice()")))
+	// #endregion Clone
 	jenFile.Line()
 
 	// #region Exists

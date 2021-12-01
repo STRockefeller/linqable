@@ -308,7 +308,11 @@ func repeatInt(element int, count int) linqableInt {
 }
 
 func (si linqableInt) ToSlice() []int {
-	return si
+	res := make([]int, len(si))
+	for i, elem := range si {
+		res[i] = elem
+	}
+	return res
 }
 
 // #region not linq
@@ -322,6 +326,10 @@ func (si *linqableInt) AddRange(collection linqableInt) {
 
 func (si *linqableInt) Clear() {
 	*si = newLinqableInt(make([]int, cap(si.ToSlice())))
+}
+
+func (si linqableInt) Clone() linqableInt {
+	return si.ToSlice()
 }
 
 func (si linqableInt) Exists(predicate func(int) bool) bool {
